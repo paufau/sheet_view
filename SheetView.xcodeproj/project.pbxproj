@@ -14,6 +14,9 @@
 		AFBDC4DC2BE4C3B5004ACB83 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = AFBDC4DB2BE4C3B5004ACB83 /* Base */; };
 		AFBDC4E62BE4D23C004ACB83 /* ScrollableContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBDC4E52BE4D23C004ACB83 /* ScrollableContentViewController.swift */; };
 		AFBDC4E92BE4D525004ACB83 /* SheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFBDC4E82BE4D525004ACB83 /* SheetViewController.swift */; };
+		AFBE27BB2BE53E5F00006AE8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = AFBE27B92BE53E5F00006AE8 /* README.md */; };
+		AFBE27BC2BE53E5F00006AE8 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = AFBE27BA2BE53E5F00006AE8 /* LICENSE */; };
+		AFBE27BE2BE53E6D00006AE8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = AFBE27BD2BE53E6D00006AE8 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,9 @@
 		AFBDC4DD2BE4C3B5004ACB83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AFBDC4E52BE4D23C004ACB83 /* ScrollableContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollableContentViewController.swift; sourceTree = "<group>"; };
 		AFBDC4E82BE4D525004ACB83 /* SheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewController.swift; sourceTree = "<group>"; };
+		AFBE27B92BE53E5F00006AE8 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		AFBE27BA2BE53E5F00006AE8 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		AFBE27BD2BE53E6D00006AE8 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +48,9 @@
 		AFBDC4C32BE4C3B4004ACB83 = {
 			isa = PBXGroup;
 			children = (
+				AFBE27BD2BE53E6D00006AE8 /* .gitignore */,
+				AFBE27BA2BE53E5F00006AE8 /* LICENSE */,
+				AFBE27B92BE53E5F00006AE8 /* README.md */,
 				AFBDC4CE2BE4C3B4004ACB83 /* SheetView */,
 				AFBDC4CD2BE4C3B4004ACB83 /* Products */,
 			);
@@ -152,7 +161,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFBE27BE2BE53E6D00006AE8 /* .gitignore in Resources */,
+				AFBE27BB2BE53E5F00006AE8 /* README.md in Resources */,
 				AFBDC4D92BE4C3B5004ACB83 /* Assets.xcassets in Resources */,
+				AFBE27BC2BE53E5F00006AE8 /* LICENSE in Resources */,
 				AFBDC4DC2BE4C3B5004ACB83 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
