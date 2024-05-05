@@ -24,7 +24,7 @@ class ScrollableContentViewController: UIViewController {
     private let itemsView: [UIView] = {
         var _itemsView: [UIView] = []
         
-        for x in 0...3 {
+        for x in 0...1 {
             let iv = UIView()
             iv.layer.borderColor = CGColor.init(red: 1, green: 1, blue: 0, alpha: 1)
             iv.layer.borderWidth = 2
