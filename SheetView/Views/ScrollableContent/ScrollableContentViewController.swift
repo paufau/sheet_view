@@ -24,7 +24,7 @@ class ScrollableContentViewController: UIViewController {
     private let itemsView: [UIView] = {
         var _itemsView: [UIView] = []
         
-        for x in 0...1 {
+        for x in 0...4 {
             let iv = UIView()
             iv.layer.borderColor = CGColor.init(red: 1, green: 1, blue: 0, alpha: 1)
             iv.layer.borderWidth = 2
@@ -39,18 +39,9 @@ class ScrollableContentViewController: UIViewController {
         toView.addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        let heightConstraint = scrollView.heightAnchor.constraint(lessThanOrEqualTo: contentView.heightAnchor);
-        heightConstraint.priority = .defaultHigh
-        
-        let topConstraint = scrollView.topAnchor.constraint(equalTo: toView.topAnchor);
-        topConstraint.priority = .defaultLow
-        
         NSLayoutConstraint.activate([
-            heightConstraint,
-            topConstraint,
-            scrollView.bottomAnchor.constraint(equalTo: toView.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: toView.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: toView.trailingAnchor)
+            scrollView.heightAnchor.constraint(equalTo: toView.heightAnchor),
+            scrollView.widthAnchor.constraint(equalTo: toView.widthAnchor),
         ])
     }
     
@@ -91,7 +82,7 @@ class ScrollableContentViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        super.viewDidLoad()        
         self.attachContentView(toView: scrollView)
         self.attachItemsView(toView: contentView)
         self.attachScrollView(toView: self.view)
