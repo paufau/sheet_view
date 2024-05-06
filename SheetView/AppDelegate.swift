@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  SteetView
 //
-//  Created by Павел Паксеев on 03.05.24.
+//  Created by paufau on 03.05.24.
 //
 
 import UIKit
