@@ -52,6 +52,11 @@ class SheetViewController: UIViewController {
         let topConstraint = containerView.topAnchor.constraint(equalTo: view.topAnchor)
         topConstraint.priority = .defaultLow
         
+        view.backgroundColor = .white
+        
+        let tapView = UIView()
+        view.addSubview(tapView)
+        
         NSLayoutConstraint.activate([
             containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -66,11 +71,20 @@ class SheetViewController: UIViewController {
             childViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
         
+        tapView.translatesAutoresizingMaskIntoConstraints = false
+        tapView.backgroundColor = .red
+        NSLayoutConstraint.activate([
+            tapView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            tapView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            tapView.topAnchor.constraint(equalTo: view.topAnchor),
+            tapView.bottomAnchor.constraint(equalTo: containerView.topAnchor),
+        ])
+        
         childViewController.didMove(toParent: self)
-        attachPanGestureRecognizer(toView: containerView)
+        attachPanGestureRecognizer(toView: view)
     }
     
-    override func viewWillLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         scrollView?.layoutIfNeeded();
         
         guard let window = UIApplication.shared.windows.first else {
@@ -106,11 +120,33 @@ class SheetViewController: UIViewController {
     @objc private func recognizePanGesture(_ gesture: UIPanGestureRecognizer) {
         print("gesture", scrollView!.frame.size)
         
-        if scrollView!.contentOffset.y <= 0 {
-            childViewController.view.transform = CGAffineTransform(
-                translationX: 0,
-                y: max(gesture.translation(in: gesture.view?.superview).y, 0)
+        switch(gesture.state) {
+            case .began, .changed:
+                if scrollView!.contentOffset.y <= 0 {
+                    childViewController.view.transform = CGAffineTransform(
+                        translationX: 0,
+                        y: max(gesture.translation(in: gesture.view?.superview).y, 0)
+                    )
+                }
+        case .ended:
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                animations: {
+                    self.childViewController.view.transform = CGAffineTransform(
+                        translationX: 0, 
+                        y: 0
+                    )
+                }
             )
+        case .possible:
+            return
+        case .cancelled:
+            return
+        case .failed:
+            return
+        @unknown default:
+            return
         }
     }
 }
