@@ -12,21 +12,25 @@ class SheetViewController: UIViewController {
     private weak var scrollView: UIScrollView? = nil;
     private var containerView: UIView = UIView();
     private var panGesture: UIPanGestureRecognizer = UIPanGestureRecognizer();
+    private var underlayView: UIView = {
+        let _underlayView = UIView()
+        _underlayView.backgroundColor = UIColor(white: 0, alpha: 0.4)
+        return _underlayView;
+    }()
     
-    init(_ childView: UIViewController) {
+    public init(_ childView: UIViewController) {
         self.childViewController = childView
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ childView: UIViewController, _ scrollView: UIScrollView) {
+    public init(_ childView: UIViewController, _ scrollView: UIScrollView) {
         self.childViewController = childView
         super.init(nibName: nil, bundle: nil)
         self.bindScrollView(scrollView)
     }
     
-    required init?(coder: NSCoder) {
-        self.childViewController = UIViewController()
-        super.init(nibName: nil, bundle: nil)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public func bindScrollView(_ scrollView: UIScrollView) {
@@ -34,10 +38,54 @@ class SheetViewController: UIViewController {
         scrollView.bounces = false
     }
     
+    private func attachUnderlayView(toView: UIView) {
+        toView.addSubview(underlayView)
+        underlayView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            underlayView.topAnchor.constraint(equalTo: toView.topAnchor),
+            underlayView.bottomAnchor.constraint(equalTo: toView.bottomAnchor),
+            underlayView.leadingAnchor.constraint(equalTo: toView.leadingAnchor),
+            underlayView.trailingAnchor.constraint(equalTo: toView.trailingAnchor),
+        ])
+    }
+    
+    private func attachContainerView(toView: UIView) {
+        toView.addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let topConstraint = containerView.topAnchor.constraint(equalTo: view.topAnchor)
+        topConstraint.priority = .defaultLow
+        
+        NSLayoutConstraint.activate([
+            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topConstraint
+        ])
+    }
+
+    public func present(on: UIViewController, animated: Bool = true) {
+        guard let superview = on.view as UIView? else { return }
+        
+        self.willMove(toParent: on)
+        on.addChild(self)
+        
+        superview.addSubview(self.view)
+
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.view.topAnchor.constraint(equalTo: superview.topAnchor),
+            self.view.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            self.view.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+            self.view.trailingAnchor.constraint(equalTo: superview.trailingAnchor),
+        ])
+        
+        self.didMove(toParent: on)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.addSubview(containerView)
         
         childViewController.willMove(toParent: self)
         addChild(childViewController)
@@ -48,21 +96,9 @@ class SheetViewController: UIViewController {
         
         containerView.translatesAutoresizingMaskIntoConstraints = false
         childViewController.view.translatesAutoresizingMaskIntoConstraints = false
+    
         
-        let topConstraint = containerView.topAnchor.constraint(equalTo: view.topAnchor)
-        topConstraint.priority = .defaultLow
-        
-        view.backgroundColor = .white
-        
-        let tapView = UIView()
-        view.addSubview(tapView)
-        
-        NSLayoutConstraint.activate([
-            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topConstraint
-        ])
+        view.backgroundColor = UIColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
         
         NSLayoutConstraint.activate([
             childViewController.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
@@ -71,14 +107,8 @@ class SheetViewController: UIViewController {
             childViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
         
-        tapView.translatesAutoresizingMaskIntoConstraints = false
-        tapView.backgroundColor = .red
-        NSLayoutConstraint.activate([
-            tapView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            tapView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            tapView.topAnchor.constraint(equalTo: view.topAnchor),
-            tapView.bottomAnchor.constraint(equalTo: containerView.topAnchor),
-        ])
+        attachUnderlayView(toView: view)
+        attachContainerView(toView: view)
         
         childViewController.didMove(toParent: self)
         attachPanGestureRecognizer(toView: view)

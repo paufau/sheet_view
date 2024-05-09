@@ -8,25 +8,32 @@
 import UIKit
 
 class ViewController: UIViewController {
+    private let openSheetButton: UIButton = {
+        let _button = UIButton()
+        _button.setTitle("Open sheet", for: .normal)
+        _button.setTitleColor(.systemBlue, for: .normal)
+        return _button
+    }()
+    
+    private let mockContent = ScrollableContentViewController()
+    
+    @objc private func openSheet() {
+        let sheetView = SheetViewController(mockContent, mockContent.scrollView)
+        sheetView.present(on: self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let mockContent = ScrollableContentViewController()
-        let sheetView = SheetViewController(mockContent, mockContent.scrollView)
+        view.backgroundColor = .white
+        view.addSubview(openSheetButton)
+        openSheetButton.addTarget(self, action: #selector(openSheet), for: .touchUpInside)
         
-        view.addSubview(sheetView.view)
-        addChild(sheetView)
-        addChild(mockContent)
-        
-        sheetView.view.translatesAutoresizingMaskIntoConstraints = false
+        openSheetButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            sheetView.view.topAnchor.constraint(equalTo: view.topAnchor),
-            sheetView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            sheetView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            sheetView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            openSheetButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            openSheetButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-        
-//        view.addSubview(mockContent.view)
     }
 }
 

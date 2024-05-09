@@ -5,6 +5,7 @@ SheetView is a component for showing bottom sheet drawer.
 ### Key goals
 - Full accessibility support including localizations
 - Keyboard avoiding support
+- Device rotation support
 - Distribute as Pod library
 
 #### API design goals
