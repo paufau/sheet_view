@@ -64,6 +64,24 @@ class SheetViewController: UIViewController {
             topConstraint
         ])
     }
+    
+    private func attachChildView(toView: UIView) {
+        childViewController.willMove(toParent: self)
+        addChild(childViewController)
+        
+        toView.addSubview(childViewController.view)
+        
+        childViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            childViewController.view.leadingAnchor.constraint(equalTo: toView.leadingAnchor),
+            childViewController.view.trailingAnchor.constraint(equalTo: toView.trailingAnchor),
+            childViewController.view.topAnchor.constraint(equalTo: toView.topAnchor),
+            childViewController.view.bottomAnchor.constraint(equalTo: toView.bottomAnchor),
+        ])
+        
+        childViewController.didMove(toParent: self)
+    }
 
     public func present(on: UIViewController, animated: Bool = true) {
         guard let superview = on.view as UIView? else { return }
@@ -82,35 +100,52 @@ class SheetViewController: UIViewController {
         ])
         
         self.didMove(toParent: on)
+        
+        self.containerView.layoutIfNeeded()
+        
+        self.underlayView.alpha = 0
+        self.containerView.transform = CGAffineTransform(
+            translationX: 0,
+            y: self.containerView.bounds.height
+        )
+        
+        UIView.animate(
+            withDuration: 0.4,
+            animations: {
+                self.containerView.transform = CGAffineTransform(translationX: 0, y: 0)
+                self.underlayView.alpha = 1
+            }
+        )
+    }
+    
+    public func dismiss(animated: Bool = true) {
+        UIView.animate(
+            withDuration: 0.4,
+            animations: {
+                self.containerView.transform = CGAffineTransform(
+                    translationX: 0,
+                    y: self.containerView.bounds.height
+                )
+                self.underlayView.alpha = 0
+            },
+            completion: {_ in 
+                self.view.removeFromSuperview()
+                self.removeFromParent()
+            }
+        )
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        childViewController.willMove(toParent: self)
-        addChild(childViewController)
-        
+        view.backgroundColor = UIColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
         modalPresentationStyle = .custom
         
-        containerView.addSubview(childViewController.view)
-        
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        childViewController.view.translatesAutoresizingMaskIntoConstraints = false
-    
-        
-        view.backgroundColor = UIColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
-        
-        NSLayoutConstraint.activate([
-            childViewController.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            childViewController.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            childViewController.view.topAnchor.constraint(equalTo: containerView.topAnchor),
-            childViewController.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-        ])
+        attachChildView(toView: containerView)
         
         attachUnderlayView(toView: view)
         attachContainerView(toView: view)
         
-        childViewController.didMove(toParent: self)
         attachPanGestureRecognizer(toView: view)
     }
     
@@ -148,27 +183,20 @@ class SheetViewController: UIViewController {
     }
     
     @objc private func recognizePanGesture(_ gesture: UIPanGestureRecognizer) {
-        print("gesture", scrollView!.frame.size)
-        
         switch(gesture.state) {
             case .began, .changed:
                 if scrollView!.contentOffset.y <= 0 {
-                    childViewController.view.transform = CGAffineTransform(
+                    containerView.transform = CGAffineTransform(
                         translationX: 0,
                         y: max(gesture.translation(in: gesture.view?.superview).y, 0)
                     )
                 }
         case .ended:
-            UIView.animate(
-                withDuration: 0.4,
-                delay: 0,
-                animations: {
-                    self.childViewController.view.transform = CGAffineTransform(
-                        translationX: 0, 
-                        y: 0
-                    )
-                }
-            )
+            if (gesture.velocity(in: gesture.view?.superview).y > 2700) {
+                dismiss()
+                return
+            }
+            restorePosition()
         case .possible:
             return
         case .cancelled:
@@ -178,6 +206,19 @@ class SheetViewController: UIViewController {
         @unknown default:
             return
         }
+    }
+    
+    private func restorePosition() {
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0,
+            animations: {
+                self.containerView.transform = CGAffineTransform(
+                    translationX: 0,
+                    y: 0
+                )
+            }
+        )
     }
 }
 
