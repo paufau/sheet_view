@@ -17,6 +17,7 @@ class SheetViewController: UIViewController {
         _underlayView.backgroundColor = UIColor(white: 0, alpha: 0.4)
         return _underlayView;
     }()
+    private var initialScrollContentOffsetY: CGFloat = 0;
     
     public init(_ childView: UIViewController) {
         self.childViewController = childView
@@ -150,15 +151,17 @@ class SheetViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        scrollView?.layoutIfNeeded();
+        containerView.layoutIfNeeded();
         
         guard let window = UIApplication.shared.windows.first else {
             return
         }
         
+        print(containerView.bounds)
+        
         let heightConstraint = containerView.heightAnchor.constraint(
             lessThanOrEqualToConstant: min(
-                scrollView!.contentSize.height,
+                containerView.bounds.height,
                 window.frame.height - window.safeAreaInsets.top
             ))
         
@@ -183,16 +186,24 @@ class SheetViewController: UIViewController {
     }
     
     @objc private func recognizePanGesture(_ gesture: UIPanGestureRecognizer) {
+        let isOverscrolled = scrollView == nil || scrollView!.contentOffset.y <= 0;
+        
         switch(gesture.state) {
-            case .began, .changed:
-                if scrollView!.contentOffset.y <= 0 {
-                    containerView.transform = CGAffineTransform(
-                        translationX: 0,
-                        y: max(gesture.translation(in: gesture.view?.superview).y, 0)
-                    )
-                }
+        case .began:
+            guard scrollView != nil else { return }
+            initialScrollContentOffsetY = scrollView!.contentOffset.y;
+        case .changed:
+            if isOverscrolled {
+                containerView.transform = CGAffineTransform(
+                    translationX: 0,
+                    y: max(gesture.translation(in: gesture.view?.superview).y - self.initialScrollContentOffsetY, 0)
+                )
+            }
         case .ended:
-            if (gesture.velocity(in: gesture.view?.superview).y > 2700) {
+            let shouldDismissByVelocity = gesture.velocity(in: gesture.view?.superview).y > 2700
+            let shouldDismissBySwipeDistance = gesture.translation(in: gesture.view?.superview).y > 100
+            
+            if ((shouldDismissByVelocity || shouldDismissBySwipeDistance) && isOverscrolled) {
                 dismiss()
                 return
             }
