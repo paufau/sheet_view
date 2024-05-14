@@ -64,6 +64,24 @@ class SheetViewController: UIViewController {
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             topConstraint
         ])
+        
+        containerView.layoutIfNeeded();
+        
+        guard let window = UIApplication.shared.windows.first else {
+            return
+        }
+        
+        let heightConstraint = containerView.heightAnchor.constraint(
+            lessThanOrEqualToConstant: min(
+                containerView.bounds.height,
+                window.frame.height - window.safeAreaInsets.top
+            ))
+        
+        heightConstraint.priority = .defaultHigh
+        
+        NSLayoutConstraint.activate([
+            heightConstraint
+        ])
     }
     
     private func attachChildView(toView: UIView) {
@@ -104,22 +122,29 @@ class SheetViewController: UIViewController {
         
         self.containerView.layoutIfNeeded()
         
-        self.underlayView.alpha = 0
-        self.containerView.transform = CGAffineTransform(
-            translationX: 0,
-            y: self.containerView.bounds.height
-        )
-        
-        UIView.animate(
-            withDuration: 0.4,
-            animations: {
-                self.containerView.transform = CGAffineTransform(translationX: 0, y: 0)
-                self.underlayView.alpha = 1
-            }
-        )
+        if (animated) {
+            self.underlayView.alpha = 0
+            self.containerView.transform = CGAffineTransform(
+                translationX: 0,
+                y: self.containerView.bounds.height
+            )
+            
+            UIView.animate(
+                withDuration: 0.4,
+                animations: {
+                    self.containerView.transform = CGAffineTransform(translationX: 0, y: 0)
+                    self.underlayView.alpha = 1
+                }
+            )
+        }
     }
     
     public func dismiss(animated: Bool = true) {
+        if (!animated) {
+            self.destroy()
+            return
+        }
+        
         UIView.animate(
             withDuration: 0.4,
             animations: {
@@ -130,10 +155,14 @@ class SheetViewController: UIViewController {
                 self.underlayView.alpha = 0
             },
             completion: {_ in 
-                self.view.removeFromSuperview()
-                self.removeFromParent()
+                self.destroy()
             }
         )
+    }
+    
+    private func destroy() {
+        self.view.removeFromSuperview()
+        self.removeFromParent()
     }
     
     override func viewDidLoad() {
@@ -148,28 +177,16 @@ class SheetViewController: UIViewController {
         attachContainerView(toView: view)
         
         attachPanGestureRecognizer(toView: view)
+        attachTapGestureRecognizer(toView: underlayView)
     }
     
-    override func viewDidLayoutSubviews() {
-        containerView.layoutIfNeeded();
-        
-        guard let window = UIApplication.shared.windows.first else {
-            return
-        }
-        
-        print(containerView.bounds)
-        
-        let heightConstraint = containerView.heightAnchor.constraint(
-            lessThanOrEqualToConstant: min(
-                containerView.bounds.height,
-                window.frame.height - window.safeAreaInsets.top
-            ))
-        
-        heightConstraint.priority = .defaultHigh
-        
-        NSLayoutConstraint.activate([
-            heightConstraint
-        ])
+    private func attachTapGestureRecognizer(toView: UIView) {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(recognizeTapGesture))
+        toView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func recognizeTapGesture(_ gesture: UITapGestureRecognizer) {
+        self.dismiss()
     }
     
     private func attachPanGestureRecognizer(toView: UIView) {

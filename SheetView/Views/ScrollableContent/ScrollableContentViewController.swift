@@ -87,12 +87,11 @@ class ScrollableContentViewController: UIViewController {
         self.attachItemsView(toView: contentView)
         self.attachScrollView(toView: self.view)
         
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-//            view.widthAnchor.constraint(equalTo: ),
-            view.heightAnchor.constraint(equalToConstant: 500),
-        ])
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        
+//        NSLayoutConstraint.activate([
+//            view.heightAnchor.constraint(equalToConstant: 500),
+//        ])
     }
     
 }
