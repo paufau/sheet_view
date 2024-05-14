@@ -65,6 +65,10 @@ class ScrollableContentViewController: UIViewController {
             let iv = itemsView[i]
             
             toView.addSubview(iv)
+            
+            iv.isAccessibilityElement = true
+            iv.accessibilityLabel = "Mock card number: \(i + 1)"
+            
             iv.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
@@ -87,11 +91,11 @@ class ScrollableContentViewController: UIViewController {
         self.attachItemsView(toView: contentView)
         self.attachScrollView(toView: self.view)
         
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            view.heightAnchor.constraint(equalToConstant: 500),
-//        ])
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            view.heightAnchor.constraint(equalToConstant: 500),
+        ])
     }
     
 }

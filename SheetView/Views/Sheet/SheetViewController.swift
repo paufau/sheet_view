@@ -22,12 +22,23 @@ class SheetViewController: UIViewController {
     public init(_ childView: UIViewController) {
         self.childViewController = childView
         super.init(nibName: nil, bundle: nil)
+        self.setupAccessibility()
     }
 
     public init(_ childView: UIViewController, _ scrollView: UIScrollView) {
         self.childViewController = childView
         super.init(nibName: nil, bundle: nil)
         self.bindScrollView(scrollView)
+        self.setupAccessibility()
+    }
+    
+    private func setupAccessibility() {
+        self.modalPresentationStyle = .custom
+        self.view.accessibilityViewIsModal = true
+        
+        self.underlayView.isAccessibilityElement = true
+        self.underlayView.accessibilityLabel = "Press to close"
+        self.underlayView.accessibilityTraits = .button
     }
     
     public required init?(coder: NSCoder) {
@@ -71,10 +82,11 @@ class SheetViewController: UIViewController {
             return
         }
         
+        // TODO fix rotated height
         let heightConstraint = containerView.heightAnchor.constraint(
             lessThanOrEqualToConstant: min(
                 containerView.bounds.height,
-                window.frame.height - window.safeAreaInsets.top
+                window.bounds.height - window.safeAreaInsets.top
             ))
         
         heightConstraint.priority = .defaultHigh
@@ -169,7 +181,6 @@ class SheetViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor(cgColor: CGColor(red: 0, green: 0, blue: 0, alpha: 0))
-        modalPresentationStyle = .custom
         
         attachChildView(toView: containerView)
         

@@ -12,6 +12,7 @@ class ViewController: UIViewController {
         let _button = UIButton()
         _button.setTitle("Open sheet", for: .normal)
         _button.setTitleColor(.systemBlue, for: .normal)
+        _button.accessibilityLabel = "Open sheet"
         return _button
     }()
     
